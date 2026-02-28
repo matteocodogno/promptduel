@@ -1,0 +1,62 @@
+spring:
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/promptduel}
+    username: ${DB_USERNAME:promptduel}
+    password: ${DB_PASSWORD:promptduel}
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      # Schema is managed exclusively by Flyway; Hibernate only validates.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    # Avoid the open-session-in-view anti-pattern
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# ── Spring Actuator ──────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      # Full details require authentication; safe to expose /actuator/health
+      show-details: when-authorized
+
+# ── Application-level properties ─────────────────────────────────────────────
+app:
+
+  cors:
+    # Must match the frontend origin exactly — wildcard (*) is explicitly forbidden.
+    # Override via CORS_ALLOWED_ORIGIN env var in staging/production.
+    # TODO: wired in TASK-5.2 (REST) and TASK-6.1 (WebSocket)
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
+
+  litellm:
+    host: ${LITELLM_HOST:localhost}
+    port: ${LITELLM_PORT:4000}
+    model: ${LITELLM_MODEL:llama3}
+    # LLM inference can reach 10+ s; 30 s is the safe upper bound.
+    timeout-ms: ${LITELLM_TIMEOUT_MS:30000}
+    # Must be set via env var in all environments; no hard-coded default.
+    # Nullable here; the LlmGateway (TASK-7) validates presence at call time.
+    api-key: ${LITELLM_API_KEY:}
+
+  validation:
+    # Design requirement: cap inputs to prevent runaway token usage.
+    max-injection-text-length: 2000
+    max-system-prompt-length: 4000

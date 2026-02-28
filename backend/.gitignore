@@ -1,0 +1,15 @@
+# Maven build output
+target/
+
+# Local developer secrets — never commit
+application-local.yml
+src/main/resources/application-local.yml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# macOS
+.DS_Store
