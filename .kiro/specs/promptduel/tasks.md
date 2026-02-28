@@ -6,28 +6,38 @@
 
 - [ ] 1. Project Foundation and Environment Setup
 
-- [ ] 1.1 Initialize the Kotlin/Spring Boot backend project
-  - Create a Gradle project with Kotlin DSL, Spring Boot 4, Spring WebSocket (STOMP/SockJS), Spring Data JPA, PostgreSQL driver, and Spring Actuator
+- [x] 1.1 Initialize the Kotlin/Spring Boot backend project
+  - Create a Maven project with Kotlin DSL, Spring Boot 4, Spring WebSocket (STOMP/SockJS), Spring Data JPA, PostgreSQL 
+    driver, and Spring Actuator
   - Set up application.yml with database connection properties, LiteLLM endpoint URL and timeout, WebSocket config, CORS allowed origin, and input length limits
   - Establish the Hexagonal Architecture package layout separating domain, application, infrastructure, and interface modules
   - _Requirements: 6.1_
 
 - [ ] 1.2 (P) Initialize the React/TypeScript frontend project
   - Bootstrap a Vite + React 19 + TypeScript project with strict mode enabled
+  - Use Tanstack Query for data fetching and caching
+  - Use React Router for client-side routing
+  - Use React Query for data fetching and caching
+  - Use React-Toastify for notifications
+  - Use React-Loading-Skeleton for loading indicators
+  - Use React-Error-Boundary for error handling
+  - Use React-Query-Devtools for debugging
+  - Use shadcn/ui as the UI library
   - Add @stomp/stompjs 7.x, sockjs-client 1.x, and html2canvas 1.x as dependencies
   - Configure environment variables for the backend REST base URL and WebSocket endpoint URL
   - _Requirements: 6.1_
 
 - [ ] 1.3 Create the PostgreSQL database schema
-  - Write migration scripts (Flyway or Liquibase) that create game_sessions, system_prompt_versions, and injection_attempts tables matching the physical data model in the design
+  - Write migration scripts (Liquibase) that create game_sessions, system_prompt_versions, and injection_attempts tables matching the physical data model in the design
   - Add the version column on game_sessions for optimistic locking, all foreign keys, and UNIQUE constraints on (game_session_id, round_number, version_number) and (game_session_id, round_number, attempt_number)
   - Create indices on injection_attempts.game_session_id and system_prompt_versions.game_session_id
   - Set NO TTL or auto-deletion policy; all rows must be retained indefinitely
   - _Requirements: 6.4_
 
-- [ ] 1.4 (P) Configure LiteLLM integration and local development environment
-  - Add application properties for LiteLLM host, port, model name, and request timeout (default 30,000 ms)
-  - Provide a Docker Compose file that starts PostgreSQL 16 and a LiteLLM Proxy container pointing at the configured model
+- [ ] 1.4 (P) Configure LiteLLM integration and connect to the local LiteLLM proxy
+  - Add application properties for LiteLLM host (localhost), port (4000), model name (local-smart), and request timeout 
+    (default 30,000 ms). LiteLLM key is set in LITELLM_MASTER_KEY environment variable.
+  - Connect to the local LiteLLM proxy using Spring http interfaces (@HttpExchange)
   - _Requirements: 6.2_
 
 ---
