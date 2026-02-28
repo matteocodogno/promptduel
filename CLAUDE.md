@@ -4,6 +4,26 @@
 - Never move to the next task without a human "go ahead"
 - If tests fail: surface the failure, propose a fix, wait for approval before applying
 
+## GitHub Issues sync rules
+- When tasks.md is finalized: create one GitHub Issue per task
+  - Title: task title from tasks.md
+  - Body: acceptance criteria + link to .kiro/specs/<feature>/tasks.md
+  - Label: "spec-task", milestone = feature name
+  - Save the issue number back into tasks.md as a comment: <!-- gh:#42 -->
+- When starting a task: add label "in-progress" to its issue
+- When a task checkbox is ticked - [x]: close the issue with "Closes #N" in the commit footer
+- Never close an issue without the corresponding checkbox being ticked first
+- Never tick a checkbox without closing the issue (keep them atomic)
+
+## Environment
+- All runtimes and tools are managed via mise
+- Never invoke node, python, java, etc. directly
+- Always prefix with: mise run <task>
+  or activate env with: mise exec -- <command>
+- If a tool is missing: add it to .mise.toml
+  and run mise install before proceeding
+- Never assume a version — always check .mise.toml first
+
 ## Commit message rules (Conventional Commits)
 - Format: <type>(<scope>): <description>
 - Types: feat | fix | docs | style | refactor | test | chore | perf | ci
