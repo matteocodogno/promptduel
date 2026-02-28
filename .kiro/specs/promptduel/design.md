@@ -115,18 +115,18 @@ graph TB
 
 ### Technology Stack
 
-| Layer | Choice / Version | Role in Feature | Notes |
-|-------|-----------------|-----------------|-------|
-| Frontend | React 19 + TypeScript 5.x | Game UI, session management, summary page | Vite build toolchain |
+| Layer | Choice / Version                       | Role in Feature | Notes |
+|-------|----------------------------------------|-----------------|-------|
+| Frontend | React 19 + TypeScript 5.x              | Game UI, session management, summary page | Vite build toolchain |
 | WebSocket Client | @stomp/stompjs 7.x + sockjs-client 1.x | STOMP over SockJS client | Direct client (no wrapper library) |
-| State Management | React Context + useReducer | Game state shared across panels | Zustand as alternative if complexity grows |
-| Image Export | html2canvas 1.x | Client-side DOM-to-image for summary export | No backend involvement |
-| Backend | Kotlin 2.2 + Spring Boot 4.0 | REST API, WebSocket handler, domain logic | Spring Framework 7 baseline |
-| WebSocket Broker | Spring STOMP in-memory SimpleBroker | Real-time event routing between 2 players | No external broker for v1 |
-| LLM Proxy | LiteLLM Proxy (Python, port 4000) | OpenAI-compatible gateway to Llama 3 70B | Model-agnostic; swap model via config only |
-| Primary LLM | Llama 3 70B (self-hosted) | Code review evaluation | Accessed exclusively via LiteLLM |
-| Database | PostgreSQL 16 | Session, round, prompt, summary persistence | Spring Data JPA + Hibernate |
-| Build | Gradle 8.x (Kotlin DSL) | Backend build and dependency management | |
+| State Management | React Context + useReducer             | Game state shared across panels | Zustand as alternative if complexity grows |
+| Image Export | html2canvas 1.x                        | Client-side DOM-to-image for summary export | No backend involvement |
+| Backend | Kotlin 2.2 + Spring Boot 4.0           | REST API, WebSocket handler, domain logic | Spring Framework 7 baseline |
+| WebSocket Broker | Spring STOMP in-memory SimpleBroker    | Real-time event routing between 2 players | No external broker for v1 |
+| LLM Proxy | LiteLLM Proxy (Python, port 4000)      | OpenAI-compatible gateway to Llama 3 70B | Model-agnostic; swap model via config only |
+| Primary LLM | Llama 3 70B (self-hosted)              | Code review evaluation | Accessed exclusively via LiteLLM |
+| Database | PostgreSQL 16                          | Session, round, prompt, summary persistence | Spring Data JPA + Hibernate |
+| Build | Maven                                  | Backend build and dependency management | |
 
 Extended rationale for key choices is in `research.md` (Architecture Pattern Evaluation, Design Decisions sections).
 
