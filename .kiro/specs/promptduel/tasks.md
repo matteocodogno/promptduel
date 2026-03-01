@@ -77,7 +77,7 @@
   - Serialize all event payloads to JSON with UUIDs as strings and Instant fields as ISO-8601 strings
   - _Requirements: 6.3_
 
-- [ ] 3.3 (P) Implement repository adapters for game data persistence <!-- gh:#8 -->
+- [x] 3.3 (P) Implement repository adapters for game data persistence <!-- gh:#8 -->
   - Implement JPA entities and Spring Data repositories for GameSession, SystemPromptVersion, and InjectionAttempt
   - Support all operations required by application services: insert new sessions and prompt versions, find session by ID, update session status and current round, list all prompt versions and injection attempts by session
   - Enforce that no rows are deleted (repository must not expose any delete methods)
