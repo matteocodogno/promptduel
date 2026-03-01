@@ -95,7 +95,7 @@
   - Detect WebSocket disconnection events and broadcast PLAYER_DISCONNECTED to the remaining player
   - _Requirements: 2.2, 2.3, 3.1, 3.5_
 
-- [ ] 4.2 (P) Implement Evaluation Service for LLM outcome classification <!-- gh:#10 -->
+- [x] 4.2 (P) Implement Evaluation Service for LLM outcome classification <!-- gh:#10 -->
   - Assemble the user message by combining the static vulnerable code, the current attack vector context, and the Jailbreaker's injection text
   - Call the LLM Gateway with the Guardian's current system prompt as the system message and the assembled user message as the user turn
   - Classify the LLM response using pattern matching: "no issues found" (or equivalent) → JAILBREAKER_WIN; "SQL injection" or vulnerability flagged → GUARDIAN_WIN; anything else → AMBIGUOUS
