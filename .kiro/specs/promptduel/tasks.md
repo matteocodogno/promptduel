@@ -64,8 +64,8 @@
 
 - [ ] 3. Infrastructure Layer — External Adapters and Persistence
 
-- [ ] 3.1 (P) Implement the LLM Gateway adapter <!-- gh:#6 -->
-  - Build an HTTP client (Spring RestClient or WebClient) that sends POST /chat/completions requests to the LiteLLM proxy in the OpenAI-compatible format (model, messages with system and user roles)
+- [x] 3.1 (P) Implement the LLM Gateway adapter <!-- gh:#6 -->
+  - Use the existing HTTP client that sends POST /chat/completions requests to the LiteLLM proxy in the OpenAI-compatible format (model, messages with system and user roles)
   - Map a successful 200 response to a structured result containing the response text, model name, and token count
   - Map HTTP 4xx/5xx responses and timeouts to distinct typed error values (HttpError, Timeout, ParseError)
   - Read LiteLLM host, port, model name, and timeout from application properties; never hard-code them

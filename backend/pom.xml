@@ -77,6 +77,13 @@
 
         <!-- ── Test ─────────────────────────────────────────────────────── -->
         <dependency>
+            <!-- Kotlin-idiomatic Mockito wrappers (any(), whenever(), verify()) -->
+            <groupId>org.mockito.kotlin</groupId>
+            <artifactId>mockito-kotlin</artifactId>
+            <version>5.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
