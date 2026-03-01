@@ -6,23 +6,14 @@
 
 ## GitHub Issues sync rules
 - When tasks.md is finalized: create one GitHub Issue per task
-  - Title: task title from tasks.md
-  - Body: acceptance criteria + link to .kiro/specs/<feature>/tasks.md
-  - Label: "spec-task", milestone = feature name
-  - Save the issue number back into tasks.md as a comment: <!-- gh:#42 -->
+    - Title: task title from tasks.md
+    - Body: acceptance criteria + link to .kiro/specs/<feature>/tasks.md
+    - Label: "spec-task", milestone = feature name
+    - Save the issue number back into tasks.md as a comment: <!-- gh:#42 -->
 - When starting a task: add label "in-progress" to its issue
 - When a task checkbox is ticked - [x]: close the issue with "Closes #N" in the commit footer
 - Never close an issue without the corresponding checkbox being ticked first
 - Never tick a checkbox without closing the issue (keep them atomic)
-
-## Environment
-- All runtimes and tools are managed via mise
-- Never invoke node, python, java, etc. directly
-- Always prefix with: mise run <task>
-  or activate env with: mise exec -- <command>
-- If a tool is missing: add it to .mise.toml
-  and run mise install before proceeding
-- Never assume a version — always check .mise.toml first
 
 ## Commit message rules (Conventional Commits)
 - Format: <type>(<scope>): <description>
@@ -36,6 +27,21 @@
   test(pdf): add export edge case coverage
   chore(deps): upgrade stripe-node to v14
 - NEVER use generic messages like "fix bug" or "update code"
+
+## Pre-commit checklist (run in order, block commit if any fail)
+# Note: linting runs automatically via git pre-commit hook
+1. mise run test        ← all tests must pass
+2. Update README.md     ← reflect any changed public API, commands, or config
+3. git add -A && git commit ...
+
+## README rules
+- README.md is generated from design.md at the start of Phase 03
+- Update README.md before every commit — this is mandatory, not optional
+- Update only the sections affected by that task
+- Sections to maintain: Overview, Prerequisites, Installation, Usage,
+  Configuration, API/CLI reference, Architecture, Contributing
+- Never remove a section — add a "Coming soon" note if not yet implemented
+- Keep it runnable: every code block in README must act
 
 # AI-DLC and Spec-Driven Development
 
