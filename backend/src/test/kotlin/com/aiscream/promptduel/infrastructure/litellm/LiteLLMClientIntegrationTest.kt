@@ -1,29 +1,72 @@
 package com.aiscream.promptduel.infrastructure.litellm
 
 import com.aiscream.promptduel.infrastructure.config.LiteLLMProperties
-import com.aiscream.promptduel.infrastructure.config.LiteLLMClientConfig
-import com.aiscream.promptduel.infrastructure.litellm.dto.ChatCompletionRequest
 import com.aiscream.promptduel.infrastructure.litellm.dto.ChatCompletionMessage
+import com.aiscream.promptduel.infrastructure.litellm.dto.ChatCompletionRequest
+import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
-import com.github.tomakehurst.wiremock.junit5.WireMockTest
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 
-@WireMockTest
+@Testcontainers
+@SpringBootTest(webEnvironment = NONE)
+@ActiveProfiles("test")
 class LiteLLMClientIntegrationTest {
 
+    @Autowired
+    lateinit var liteLLMHttpClient: LiteLLMHttpClient
+
+    companion object {
+        @Container
+        val postgres: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:16-alpine")
+
+        // Started at class-load time so the port is available during @DynamicPropertySource
+        private val wireMock = WireMockServer(wireMockConfig().dynamicPort()).also { it.start() }
+
+        @AfterAll
+        @JvmStatic
+        fun stopWireMock() {
+            wireMock.stop()
+        }
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+            registry.add("spring.datasource.username", postgres::getUsername)
+            registry.add("spring.datasource.password", postgres::getPassword)
+            registry.add("app.litellm.host") { "localhost" }
+            registry.add("app.litellm.port") { wireMock.port() }
+            registry.add("app.litellm.api-key") { "test-key" }
+        }
+    }
+
+    @BeforeEach
+    fun resetWireMock() {
+        wireMock.resetAll()
+    }
+
     @Test
-    fun `sends POST to chat completions with correct body and Authorization header`(
-        wm: WireMockRuntimeInfo,
-    ) {
-        wm.wireMock.register(
+    fun `sends POST to chat completions with correct body and Authorization header`() {
+        wireMock.stubFor(
             post(urlEqualTo("/chat/completions"))
                 .willReturn(
                     aResponse()
@@ -48,15 +91,6 @@ class LiteLLMClientIntegrationTest {
                 )
         )
 
-        val props = LiteLLMProperties(
-            host = "localhost",
-            port = wm.httpPort,
-            model = "local-smart",
-            timeoutMs = 5000,
-            apiKey = "test-key",
-        )
-        val client = LiteLLMClientConfig().liteLLMHttpClient(props)
-
         val request = ChatCompletionRequest(
             model = "local-smart",
             messages = listOf(
@@ -65,13 +99,13 @@ class LiteLLMClientIntegrationTest {
             ),
         )
 
-        val response = client.complete(request)
+        val response = liteLLMHttpClient.complete(request)
 
         assertNotNull(response)
         assertEquals("local-smart", response.model)
         assertEquals("SQL injection found.", response.choices.first().message.content)
 
-        wm.wireMock.verifyThat(
+        wireMock.verify(
             postRequestedFor(urlEqualTo("/chat/completions"))
                 .withHeader("Authorization", equalTo("Bearer test-key"))
                 .withHeader("Content-Type", equalTo("application/json"))

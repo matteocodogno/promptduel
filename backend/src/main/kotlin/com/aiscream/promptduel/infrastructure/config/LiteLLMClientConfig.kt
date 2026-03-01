@@ -4,37 +4,31 @@ import com.aiscream.promptduel.infrastructure.litellm.LiteLLMHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
-import org.springframework.web.client.RestClient
-import org.springframework.web.client.support.RestClientAdapter
-import org.springframework.web.service.invoker.HttpServiceProxyFactory
+import org.springframework.web.client.support.RestClientHttpServiceGroupConfigurer
+import org.springframework.web.service.registry.ImportHttpServices
+import java.time.Duration
 
 @Configuration
-class LiteLLMClientConfig {
+@ImportHttpServices(group = "litellm", types = [LiteLLMHttpClient::class])
+class LiteLLMClientConfig(private val props: LiteLLMProperties) {
 
     @Bean
-    fun liteLLMHttpClient(props: LiteLLMProperties): LiteLLMHttpClient {
-        val baseUrl = "http://${props.host}:${props.port}"
-
-        val requestFactory = SimpleClientHttpRequestFactory().also {
-            it.setConnectTimeout(5_000)
-            it.setReadTimeout(props.timeoutMs.toInt())
+    fun liteLLMGroupConfigurer(): RestClientHttpServiceGroupConfigurer =
+        RestClientHttpServiceGroupConfigurer { groups ->
+            groups.filterByName("litellm").forEachClient { _, builder ->
+                val requestFactory = SimpleClientHttpRequestFactory().also {
+                    it.setConnectTimeout(Duration.ofSeconds(5))
+                    it.setReadTimeout(Duration.ofMillis(props.timeoutMs))
+                }
+                builder
+                    .requestFactory(requestFactory)
+                    .baseUrl("http://${props.host}:${props.port}")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                if (props.apiKey.isNotBlank()) {
+                    builder.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${props.apiKey}")
+                }
+            }
         }
-
-        val builder = RestClient.builder()
-            .baseUrl(baseUrl)
-            .requestFactory(requestFactory)
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-
-        val restClient = if (props.apiKey.isNotBlank()) {
-            builder.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${props.apiKey}").build()
-        } else {
-            builder.build()
-        }
-
-        val adapter = RestClientAdapter.create(restClient)
-        val factory = HttpServiceProxyFactory.builderFor(adapter).build()
-
-        return factory.createClient(LiteLLMHttpClient::class.java)
-    }
 }
