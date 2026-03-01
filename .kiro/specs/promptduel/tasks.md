@@ -71,7 +71,7 @@
   - Read LiteLLM host, port, model name, and timeout from application properties; never hard-code them
   - _Requirements: 6.2_
 
-- [ ] 3.2 (P) Implement the Game Event Publisher <!-- gh:#7 -->
+- [x] 3.2 (P) Implement the Game Event Publisher <!-- gh:#7 -->
   - Use Spring's SimpMessagingTemplate to broadcast typed game events to /topic/game/{gameId} for all-player delivery
   - Support targeted delivery to /user/queue/game/{gameId} for player-specific messages (hints)
   - Serialize all event payloads to JSON with UUIDs as strings and Instant fields as ISO-8601 strings
