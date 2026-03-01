@@ -44,7 +44,7 @@
 
 - [ ] 2. Domain Layer — Core Game Logic
 
-- [ ] 2.1 (P) Build the Attack Vector Registry <!-- gh:#4 -->
+- [x] 2.1 (P) Build the Attack Vector Registry <!-- gh:#4 -->
   - Define the four attack vectors in strict order: (1) Direct Override, (2) Role Confusion, (3) Context Manipulation, (4) Indirect Injection
   - For each vector store: round number, name, educational description, tier-1 hint text, and tier-2 example defensive prompt
   - Include the intentionally weak base system prompt given to Guardians at game start — designed to be defeated by round-1 immediately
