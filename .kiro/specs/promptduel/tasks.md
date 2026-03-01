@@ -13,7 +13,7 @@
   - Establish the Hexagonal Architecture package layout separating domain, application, infrastructure, and interface modules
   - _Requirements: 6.1_
 
-- [ ] 1.2 (P) Initialize the React/TypeScript frontend project <!-- gh:#1 -->
+- [x] 1.2 (P) Initialize the React/TypeScript frontend project <!-- gh:#1 -->
   - Bootstrap a Vite + React 19 + TypeScript project with strict mode enabled
   - Use Tanstack Query for data fetching and caching
   - Use React Router for client-side routing

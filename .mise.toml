@@ -3,3 +3,23 @@ java = "temurin-21"
 maven = "3.9.9"
 node = "22"
 pnpm = "9"
+
+[tasks."frontend:dev"]
+description = "Start the frontend dev server"
+dir = "frontend"
+run = "pnpm dev"
+
+[tasks."frontend:build"]
+description = "Build the frontend for production"
+dir = "frontend"
+run = "pnpm build"
+
+[tasks."frontend:test"]
+description = "Run frontend unit tests"
+dir = "frontend"
+run = "pnpm test"
+
+[tasks."frontend:lint"]
+description = "Lint the frontend source"
+dir = "frontend"
+run = "pnpm lint"
