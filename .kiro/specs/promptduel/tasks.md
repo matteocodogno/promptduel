@@ -52,7 +52,7 @@
   - Keep the registry read-only with zero I/O or external dependencies
   - _Requirements: 2.1, 3.3, 3.4, 4.1_
 
-- [ ] 2.2 (P) Build the Session State Machine <!-- gh:#5 -->
+- [x] 2.2 (P) Build the Session State Machine <!-- gh:#5 -->
   - Model valid top-level states: WAITING_FOR_PLAYERS → IN_PROGRESS → COMPLETED with no other transitions allowed
   - Model per-round sub-states: ROUND_ACTIVE → EVALUATING → ROUND_RESULT (JAILBREAKER_WIN or GUARDIAN_WIN)
   - Return a typed error for any illegal transition rather than silently mutating state
