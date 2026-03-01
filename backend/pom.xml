@@ -88,6 +88,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- WireMock standalone — self-contained Jetty, no classpath conflicts -->
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>3.13.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- Real PostgreSQL 16 container for integration/context tests -->
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>

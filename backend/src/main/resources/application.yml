@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      # Schema is managed exclusively by Flyway; Hibernate only validates.
+      # Schema is managed exclusively by Liquibase; Hibernate only validates.
       ddl-auto: validate
     properties:
       hibernate:
@@ -49,12 +49,11 @@ app:
   litellm:
     host: ${LITELLM_HOST:localhost}
     port: ${LITELLM_PORT:4000}
-    model: ${LITELLM_MODEL:llama3}
+    model: ${LITELLM_MODEL:local-smart}
     # LLM inference can reach 10+ s; 30 s is the safe upper bound.
     timeout-ms: ${LITELLM_TIMEOUT_MS:30000}
-    # Must be set via env var in all environments; no hard-coded default.
-    # Nullable here; the LlmGateway (TASK-7) validates presence at call time.
-    api-key: ${LITELLM_API_KEY:}
+    # Must be set via LITELLM_MASTER_KEY env var; no hard-coded default.
+    api-key: ${LITELLM_MASTER_KEY:}
 
   validation:
     # Design requirement: cap inputs to prevent runaway token usage.

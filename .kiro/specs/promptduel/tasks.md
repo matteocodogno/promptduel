@@ -34,7 +34,7 @@
   - Set NO TTL or auto-deletion policy; all rows must be retained indefinitely
   - _Requirements: 6.4_
 
-- [ ] 1.4 (P) Configure LiteLLM integration and connect to the local LiteLLM proxy <!-- gh:#3 -->
+- [x] 1.4 (P) Configure LiteLLM integration and connect to the local LiteLLM proxy <!-- gh:#3 -->
   - Add application properties for LiteLLM host (localhost), port (4000), model name (local-smart), and request timeout
     (default 30,000 ms). LiteLLM key is set in LITELLM_MASTER_KEY environment variable.
   - Connect to the local LiteLLM proxy using Spring http interfaces (@HttpExchange)
