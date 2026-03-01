@@ -12,16 +12,18 @@ import java.time.Duration
 
 @Configuration
 @ImportHttpServices(group = "litellm", types = [LiteLLMHttpClient::class])
-class LiteLLMClientConfig(private val props: LiteLLMProperties) {
-
+class LiteLLMClientConfig(
+    private val props: LiteLLMProperties,
+) {
     @Bean
     fun liteLLMGroupConfigurer(): RestClientHttpServiceGroupConfigurer =
         RestClientHttpServiceGroupConfigurer { groups ->
             groups.filterByName("litellm").forEachClient { _, builder ->
-                val requestFactory = SimpleClientHttpRequestFactory().also {
-                    it.setConnectTimeout(Duration.ofSeconds(5))
-                    it.setReadTimeout(Duration.ofMillis(props.timeoutMs))
-                }
+                val requestFactory =
+                    SimpleClientHttpRequestFactory().also {
+                        it.setConnectTimeout(Duration.ofSeconds(5))
+                        it.setReadTimeout(Duration.ofMillis(props.timeoutMs))
+                    }
                 builder
                     .requestFactory(requestFactory)
                     .baseUrl("http://${props.host}:${props.port}")

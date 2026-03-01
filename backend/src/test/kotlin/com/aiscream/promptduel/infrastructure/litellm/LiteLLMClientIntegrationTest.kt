@@ -30,7 +30,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @SpringBootTest(webEnvironment = NONE)
 @ActiveProfiles("test")
 class LiteLLMClientIntegrationTest {
-
     @Autowired
     lateinit var liteLLMHttpClient: LiteLLMHttpClient
 
@@ -86,24 +85,31 @@ class LiteLLMClientIntegrationTest {
                               ],
                               "usage": { "prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15 }
                             }
-                            """.trimIndent()
-                        )
-                )
+                            """.trimIndent(),
+                        ),
+                ),
         )
 
-        val request = ChatCompletionRequest(
-            model = "local-smart",
-            messages = listOf(
-                ChatCompletionMessage(role = "system", content = "You are a code reviewer."),
-                ChatCompletionMessage(role = "user", content = "Review this: SELECT * FROM users"),
-            ),
-        )
+        val request =
+            ChatCompletionRequest(
+                model = "local-smart",
+                messages =
+                    listOf(
+                        ChatCompletionMessage(role = "system", content = "You are a code reviewer."),
+                        ChatCompletionMessage(role = "user", content = "Review this: SELECT * FROM users"),
+                    ),
+            )
 
         val response = liteLLMHttpClient.complete(request)
 
         assertNotNull(response)
         assertEquals("local-smart", response.model)
-        assertEquals("SQL injection found.", response.choices.first().message.content)
+        assertEquals(
+            "SQL injection found.",
+            response.choices
+                .first()
+                .message.content,
+        )
 
         wireMock.verify(
             postRequestedFor(urlEqualTo("/chat/completions"))
@@ -120,9 +126,10 @@ class LiteLLMClientIntegrationTest {
                           ]
                         }
                         """.trimIndent(),
-                        true, false
-                    )
-                )
+                        true,
+                        false,
+                    ),
+                ),
         )
     }
 
@@ -137,13 +144,14 @@ class LiteLLMClientIntegrationTest {
 
     @Test
     fun `properties accept overridden values`() {
-        val props = LiteLLMProperties(
-            host = "llm-host",
-            port = 9000,
-            model = "custom-model",
-            timeoutMs = 60_000L,
-            apiKey = "secret",
-        )
+        val props =
+            LiteLLMProperties(
+                host = "llm-host",
+                port = 9000,
+                model = "custom-model",
+                timeoutMs = 60_000L,
+                apiKey = "secret",
+            )
         assertEquals("llm-host", props.host)
         assertEquals(9000, props.port)
         assertEquals("custom-model", props.model)

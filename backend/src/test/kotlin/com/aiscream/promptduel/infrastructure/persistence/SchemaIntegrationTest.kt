@@ -1,5 +1,7 @@
 package com.aiscream.promptduel.infrastructure.persistence
 
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,14 +13,11 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 
 @Testcontainers
 @SpringBootTest(webEnvironment = NONE)
 @ActiveProfiles("test")
 class SchemaIntegrationTest {
-
     companion object {
         @Container
         val postgres: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:16-alpine")
@@ -80,39 +79,41 @@ class SchemaIntegrationTest {
 
     @Test
     fun `system_prompt_versions has unique constraint on (game_session_id, round_number, version_number)`() {
-        val count = jdbc.queryForObject(
-            """
-            SELECT COUNT(*) FROM information_schema.table_constraints tc
-            JOIN information_schema.constraint_column_usage cu
-              ON tc.constraint_name = cu.constraint_name
-             AND tc.table_name = cu.table_name
-            WHERE tc.constraint_type = 'UNIQUE'
-              AND tc.table_name = 'system_prompt_versions'
-              AND cu.column_name IN ('game_session_id', 'round_number', 'version_number')
-            GROUP BY tc.constraint_name
-            HAVING COUNT(cu.column_name) = 3
-            """.trimIndent(),
-            Int::class.java
-        ) ?: 0
+        val count =
+            jdbc.queryForObject(
+                """
+                SELECT COUNT(*) FROM information_schema.table_constraints tc
+                JOIN information_schema.constraint_column_usage cu
+                  ON tc.constraint_name = cu.constraint_name
+                 AND tc.table_name = cu.table_name
+                WHERE tc.constraint_type = 'UNIQUE'
+                  AND tc.table_name = 'system_prompt_versions'
+                  AND cu.column_name IN ('game_session_id', 'round_number', 'version_number')
+                GROUP BY tc.constraint_name
+                HAVING COUNT(cu.column_name) = 3
+                """.trimIndent(),
+                Int::class.java,
+            ) ?: 0
         assertTrue(count > 0, "Missing UNIQUE(game_session_id, round_number, version_number) on system_prompt_versions")
     }
 
     @Test
     fun `injection_attempts has unique constraint on (game_session_id, round_number, attempt_number)`() {
-        val count = jdbc.queryForObject(
-            """
-            SELECT COUNT(*) FROM information_schema.table_constraints tc
-            JOIN information_schema.constraint_column_usage cu
-              ON tc.constraint_name = cu.constraint_name
-             AND tc.table_name = cu.table_name
-            WHERE tc.constraint_type = 'UNIQUE'
-              AND tc.table_name = 'injection_attempts'
-              AND cu.column_name IN ('game_session_id', 'round_number', 'attempt_number')
-            GROUP BY tc.constraint_name
-            HAVING COUNT(cu.column_name) = 3
-            """.trimIndent(),
-            Int::class.java
-        ) ?: 0
+        val count =
+            jdbc.queryForObject(
+                """
+                SELECT COUNT(*) FROM information_schema.table_constraints tc
+                JOIN information_schema.constraint_column_usage cu
+                  ON tc.constraint_name = cu.constraint_name
+                 AND tc.table_name = cu.table_name
+                WHERE tc.constraint_type = 'UNIQUE'
+                  AND tc.table_name = 'injection_attempts'
+                  AND cu.column_name IN ('game_session_id', 'round_number', 'attempt_number')
+                GROUP BY tc.constraint_name
+                HAVING COUNT(cu.column_name) = 3
+                """.trimIndent(),
+                Int::class.java,
+            ) ?: 0
         assertTrue(count > 0, "Missing UNIQUE(game_session_id, round_number, attempt_number) on injection_attempts")
     }
 
@@ -149,50 +150,60 @@ class SchemaIntegrationTest {
 
     @Test
     fun `game_sessions current_round defaults to 1`() {
-        val default = jdbc.queryForObject(
-            "SELECT column_default FROM information_schema.columns WHERE table_name = 'game_sessions' AND column_name = 'current_round'",
-            String::class.java
-        )
+        val default =
+            jdbc.queryForObject(
+                "SELECT column_default FROM information_schema.columns WHERE table_name = 'game_sessions' AND column_name = 'current_round'",
+                String::class.java,
+            )
         assertEquals("1", default, "current_round should default to 1")
     }
 
     @Test
     fun `game_sessions version defaults to 0`() {
-        val default = jdbc.queryForObject(
-            "SELECT column_default FROM information_schema.columns WHERE table_name = 'game_sessions' AND column_name = 'version'",
-            String::class.java
-        )
+        val default =
+            jdbc.queryForObject(
+                "SELECT column_default FROM information_schema.columns WHERE table_name = 'game_sessions' AND column_name = 'version'",
+                String::class.java,
+            )
         assertEquals("0", default, "version should default to 0")
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private fun fetchColumns(table: String): Set<String> =
-        jdbc.queryForList(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = ?",
-            String::class.java,
-            table
-        ).toSet()
+        jdbc
+            .queryForList(
+                "SELECT column_name FROM information_schema.columns WHERE table_name = ?",
+                String::class.java,
+                table,
+            ).toSet()
 
-    private fun foreignKeyExists(fromTable: String, toTable: String): Boolean =
-        (jdbc.queryForObject(
-            """
-            SELECT COUNT(*) FROM information_schema.referential_constraints rc
-            JOIN information_schema.table_constraints tc
-              ON rc.constraint_name = tc.constraint_name
-            JOIN information_schema.table_constraints tc2
-              ON rc.unique_constraint_name = tc2.constraint_name
-            WHERE tc.table_name = ? AND tc2.table_name = ?
-            """.trimIndent(),
-            Int::class.java,
-            fromTable,
-            toTable
-        ) ?: 0) > 0
+    private fun foreignKeyExists(
+        fromTable: String,
+        toTable: String,
+    ): Boolean =
+        (
+            jdbc.queryForObject(
+                """
+                SELECT COUNT(*) FROM information_schema.referential_constraints rc
+                JOIN information_schema.table_constraints tc
+                  ON rc.constraint_name = tc.constraint_name
+                JOIN information_schema.table_constraints tc2
+                  ON rc.unique_constraint_name = tc2.constraint_name
+                WHERE tc.table_name = ? AND tc2.table_name = ?
+                """.trimIndent(),
+                Int::class.java,
+                fromTable,
+                toTable,
+            ) ?: 0
+        ) > 0
 
     private fun indexExists(indexName: String): Boolean =
-        (jdbc.queryForObject(
-            "SELECT COUNT(*) FROM pg_indexes WHERE indexname = ?",
-            Int::class.java,
-            indexName
-        ) ?: 0) > 0
+        (
+            jdbc.queryForObject(
+                "SELECT COUNT(*) FROM pg_indexes WHERE indexname = ?",
+                Int::class.java,
+                indexName,
+            ) ?: 0
+        ) > 0
 }

@@ -8,7 +8,8 @@ import org.springframework.web.service.annotation.PostExchange
 
 @HttpExchange(contentType = "application/json")
 interface LiteLLMHttpClient {
-
     @PostExchange("/chat/completions")
-    fun complete(@RequestBody request: ChatCompletionRequest): ChatCompletionResponse
+    fun complete(
+        @RequestBody request: ChatCompletionRequest,
+    ): ChatCompletionResponse
 }

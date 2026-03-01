@@ -23,3 +23,13 @@ run = "pnpm test"
 description = "Lint the frontend source"
 dir = "frontend"
 run = "pnpm lint"
+
+[tasks."backend:lint"]
+description = "Check Kotlin code style with ktlint"
+dir = "backend"
+run = "mvn ktlint:check"
+
+[tasks."backend:lint-fix"]
+description = "Auto-format Kotlin sources with ktlint"
+dir = "backend"
+run = "mvn ktlint:format"
