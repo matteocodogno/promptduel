@@ -8,5 +8,7 @@ interface SessionRepository {
 
     fun findById(gameId: UUID): GameSession?
 
+    fun findByPlayerId(playerId: UUID): GameSession?
+
     fun update(session: GameSession): GameSession
 }

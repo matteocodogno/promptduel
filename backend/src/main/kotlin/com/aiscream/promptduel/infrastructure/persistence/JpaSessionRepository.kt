@@ -17,6 +17,9 @@ class JpaSessionRepository(
 
     override fun findById(gameId: UUID): GameSession? = jpa.findById(gameId).orElse(null)?.toDomain()
 
+    override fun findByPlayerId(playerId: UUID): GameSession? =
+        jpa.findByJailbreakerIdOrGuardianId(playerId, playerId)?.toDomain()
+
     override fun update(session: GameSession): GameSession {
         val entity =
             jpa.findById(session.id).orElseThrow {

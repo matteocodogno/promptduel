@@ -87,7 +87,7 @@
 
 - [ ] 4. Application Layer — Business Services
 
-- [ ] 4.1 Implement Game Service for session lifecycle <!-- gh:#9 -->
+- [x] 4.1 Implement Game Service for session lifecycle <!-- gh:#9 -->
   - Create session: generate a UUID Game ID, assign the creator's chosen role, persist the session in WAITING_FOR_PLAYERS status, and persist the base system prompt as version 1
   - Join session: assign the second player to the remaining role; reject with an appropriate error if the session is not in WAITING_FOR_PLAYERS or already has two players
   - Handle player-ready signals: when both players have signaled ready, transition session to IN_PROGRESS and broadcast GAME_STARTED (including round 1, the current system prompt, and the attack vector name) to both players

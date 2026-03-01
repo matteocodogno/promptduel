@@ -122,6 +122,34 @@ class GameSessionRepositoryTest {
     }
 
     @Test
+    fun `findByPlayerId returns session when player is the jailbreaker`() {
+        val jailbreakerId = UUID.randomUUID()
+        val session = aGameSession(jailbreakerId = jailbreakerId)
+        sessionRepository.save(session)
+
+        val found = sessionRepository.findByPlayerId(jailbreakerId)
+        assertNotNull(found)
+        assertEquals(session.id, found!!.id)
+    }
+
+    @Test
+    fun `findByPlayerId returns session when player is the guardian`() {
+        val guardianId = UUID.randomUUID()
+        val session = aGameSession(guardianId = guardianId)
+        sessionRepository.save(session)
+
+        val found = sessionRepository.findByPlayerId(guardianId)
+        assertNotNull(found)
+        assertEquals(session.id, found!!.id)
+    }
+
+    @Test
+    fun `findByPlayerId returns null for unknown player`() {
+        val found = sessionRepository.findByPlayerId(UUID.randomUUID())
+        assertNull(found)
+    }
+
+    @Test
     fun `SessionRepository does not expose delete operations`() {
         val methods = SessionRepository::class.java.methods.map { it.name }
         assert("delete" !in methods) { "delete must not be exposed on SessionRepository" }
