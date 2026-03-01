@@ -104,7 +104,7 @@
   - Make the pattern list and judge prompt configurable via application properties
   - _Requirements: 2.1, 3.2_
 
-- [ ] 4.3 Implement Round Service for the turn loop <!-- gh:#11 -->
+- [x] 4.3 Implement Round Service for the turn loop <!-- gh:#11 -->
   - Accept injection submissions from the Jailbreaker: validate that the session is IN_PROGRESS and the caller holds the JAILBREAKER role before delegating to Evaluation Service
   - Persist each InjectionAttempt with its injection text, full LLM response, evaluation method (PATTERN_MATCH or JUDGE_CALL), outcome, and the system prompt version ID used
   - On JAILBREAKER_WIN: broadcast ROUND_ATTEMPT_FAILED carrying the injection text, LLM response, and attempt number to both players; allow the Guardian to then update the system prompt
