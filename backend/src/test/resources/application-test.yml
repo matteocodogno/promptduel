@@ -1,11 +1,7 @@
 spring:
-  flyway:
-    # No migration scripts exist yet (added in TASK-3).
-    # Disabled for the context smoke test; re-enable after TASK-3.
-    enabled: false
+  liquibase:
+    enabled: true
 
   jpa:
     hibernate:
-      # "validate" would fail with no tables; "none" lets the context load
-      # against the empty TestContainers DB without errors.
-      ddl-auto: none
+      ddl-auto: validate

@@ -27,7 +27,7 @@
   - Configure environment variables for the backend REST base URL and WebSocket endpoint URL
   - _Requirements: 6.1_
 
-- [ ] 1.3 Create the PostgreSQL database schema <!-- gh:#2 -->
+- [x] 1.3 Create the PostgreSQL database schema <!-- gh:#2 -->
   - Write migration scripts (Liquibase) that create game_sessions, system_prompt_versions, and injection_attempts tables matching the physical data model in the design
   - Add the version column on game_sessions for optimistic locking, all foreign keys, and UNIQUE constraints on (game_session_id, round_number, version_number) and (game_session_id, round_number, attempt_number)
   - Create indices on injection_attempts.game_session_id and system_prompt_versions.game_session_id
