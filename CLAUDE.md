@@ -43,6 +43,11 @@
 - Never remove a section — add a "Coming soon" note if not yet implemented
 - Keep it runnable: every code block in README must act
 
+## Steering update (after every task)
+- Run /kiro:steering after each completed task
+- Capture: any new pattern, naming convention, or tech decision made during impl
+- Never modify CLAUDE.md autonomously — propose changes to the human instead
+
 # AI-DLC and Spec-Driven Development
 
 Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life Cycle)
